@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17A0B1301C47678F0035C223 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17A0B12F1C47678F0035C223 /* Alamofire.framework */; };
+		17A0B1311C47678F0035C223 /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 17A0B12F1C47678F0035C223 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		17A0B1341C47679A0035C223 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17A0B1331C47679A0035C223 /* SwiftyJSON.framework */; };
+		17A0B1351C47679A0035C223 /* SwiftyJSON.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 17A0B1331C47679A0035C223 /* SwiftyJSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17C55D2B1C475D4F006E6DA5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C55D2A1C475D4F006E6DA5 /* AppDelegate.swift */; };
 		17C55D2D1C475D4F006E6DA5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C55D2C1C475D4F006E6DA5 /* ViewController.swift */; };
 		17C55D301C475D4F006E6DA5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17C55D2E1C475D4F006E6DA5 /* Main.storyboard */; };
@@ -33,7 +37,24 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		17A0B1321C47678F0035C223 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				17A0B1351C47679A0035C223 /* SwiftyJSON.framework in Embed Frameworks */,
+				17A0B1311C47678F0035C223 /* Alamofire.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		17A0B12F1C47678F0035C223 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
+		17A0B1331C47679A0035C223 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		17C55D271C475D4F006E6DA5 /* BsafeSF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BsafeSF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17C55D2A1C475D4F006E6DA5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		17C55D2C1C475D4F006E6DA5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -54,6 +75,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17A0B1341C47679A0035C223 /* SwiftyJSON.framework in Frameworks */,
+				17A0B1301C47678F0035C223 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,10 +97,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		17611FB21C47647100444542 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				17A0B1331C47679A0035C223 /* SwiftyJSON.framework */,
+				17A0B12F1C47678F0035C223 /* Alamofire.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		17C55D1E1C475D4F006E6DA5 = {
 			isa = PBXGroup;
 			children = (
 				17C55D291C475D4F006E6DA5 /* BsafeSF */,
+				17611FB21C47647100444542 /* Frameworks */,
 				17C55D3E1C475D4F006E6DA5 /* BsafeSFTests */,
 				17C55D491C475D4F006E6DA5 /* BsafeSFUITests */,
 				17C55D281C475D4F006E6DA5 /* Products */,
@@ -135,6 +168,8 @@
 				17C55D231C475D4F006E6DA5 /* Sources */,
 				17C55D241C475D4F006E6DA5 /* Frameworks */,
 				17C55D251C475D4F006E6DA5 /* Resources */,
+				17A0B1321C47678F0035C223 /* Embed Frameworks */,
+				17A0B1371C4767F30035C223 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -250,6 +285,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		17A0B1371C4767F30035C223 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		17C55D231C475D4F006E6DA5 /* Sources */ = {
@@ -397,6 +450,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = BsafeSF/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = close5.BsafeSF;
@@ -408,6 +465,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = BsafeSF/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = close5.BsafeSF;
@@ -482,6 +543,7 @@
 				17C55D511C475D4F006E6DA5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		17C55D521C475D4F006E6DA5 /* Build configuration list for PBXNativeTarget "BsafeSFTests" */ = {
 			isa = XCConfigurationList;
@@ -490,6 +552,7 @@
 				17C55D541C475D4F006E6DA5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		17C55D551C475D4F006E6DA5 /* Build configuration list for PBXNativeTarget "BsafeSFUITests" */ = {
 			isa = XCConfigurationList;
@@ -498,6 +561,7 @@
 				17C55D571C475D4F006E6DA5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
