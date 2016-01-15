@@ -8,36 +8,27 @@
 
 import UIKit
 import MapKit
-import Alamofire
 import SwiftyJSON
 
-private let initLocation = CLLocation(latitude: 37.7545565620279, longitude: -122.419711251166)
+private let initLocation = CLLocation(latitude: 37.774930, longitude: -122.435420)
 
 class ViewController: UIViewController {
     
     @IBOutlet weak var baseMapView: MKMapView!
     
+    let client = SODAClient(domain: "data.sfgov.org", token: "j9av0DoPIMeXOVaSrmD3jFeEf")
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        let urlStr = "https://data.sfgov.org/resource/ritf-b9ki.json"
+        getData()
         
         setMapRegion(initLocation)
         
-        getData(urlStr)
-        
-//        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) { () -> Void in
-//            self.dataModel.getData(urlStr)
-//            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                print("here")
-//                for (index, subJson):(String, JSON) in self.dataModel.jsonData {
-//                    print(index, subJson["pddistrict"])
-//                }
-//            })
-//        }
-
-        print("test")
+        NSLog("getting data concurrently")
+//        print("getting data concurrently")
     }
 
     override func didReceiveMemoryWarning() {
@@ -52,11 +43,19 @@ class ViewController: UIViewController {
         self.baseMapView.setRegion(coordinateRegion, animated: true)
     }
     
-    func getData(urlStr: String) {
-        Alamofire.request(.GET, urlStr).responseJSON { response in
-            switch response.result {
-            case .Success(let value): self.parseData(value)//self.testJSON(value) // if succeed, generate marks
-            case .Failure(let error): print("\(error)")
+    func getData() {
+        let crimeLocation = client.queryDataset("tmnf-yvry")
+        
+        let targetDate = NSDate(timeIntervalSinceNow: -2_592_000.0)
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let timeStr = "date >= '\(formatter.stringFromDate(targetDate))T00:00:00'"
+        
+        
+        crimeLocation.filter(timeStr).get { (res) -> Void in
+            switch res {
+            case .Dataset(let data): self.parseData(data)//print(data.count)
+            case .Error(let error): print("\(error)")
             }
         }
     }
@@ -69,14 +68,33 @@ class ViewController: UIViewController {
     }
     
     func parseData(rawData: AnyObject) {
+        
         let json = JSON(rawData)
         let datamodel = DataModel(jsonData: json)
         let marksData = datamodel.generateMarks()
+        
+        // count times in different districts
+        var crimeTimes = [String: Int]()
+        
         // generate marks on the map
-//        print(marksData)
+        print(marksData.count)
         for mark in marksData {
-            let anno = Marks(title: mark.title, coordinate: mark.coordinate)
+            
+            // classify district
+            let district = mark.district
+            if let val = crimeTimes[district] {
+                crimeTimes[district] = val + 1
+            } else {
+                crimeTimes[district] = 1
+            }
+            let anno = Marks(title: mark.title, district: mark.district, coordinate: mark.coordinate)
+//            print(mark.district)
+            
+            
             self.baseMapView.addAnnotation(anno)
+        }
+        for (key, val) in crimeTimes {
+            print(key, val)
         }
     }
     
@@ -84,10 +102,12 @@ class ViewController: UIViewController {
 
 class Marks: NSObject, MKAnnotation {
     let title: String?
+    let district: String
     let coordinate: CLLocationCoordinate2D
     
-    init(title: String, coordinate: CLLocationCoordinate2D) {
+    init(title: String, district: String, coordinate: CLLocationCoordinate2D) {
         self.title = title
+        self.district = district
         self.coordinate = coordinate
     }
 }

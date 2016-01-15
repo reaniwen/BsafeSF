@@ -8,7 +8,6 @@
 
 import Foundation
 import MapKit
-import Alamofire
 import SwiftyJSON
 
 
@@ -30,23 +29,18 @@ class DataModel {
         return dataCopy
     }
     
-    func generateMarks() -> [(title:String, coordinate: CLLocationCoordinate2D)]{
-        var marksData = [(title:String, coordinate: CLLocationCoordinate2D)]()
+    func generateMarks() -> [(title:String, district: String, coordinate: CLLocationCoordinate2D)]{
+        var marksData = [(title:String, district: String, coordinate: CLLocationCoordinate2D)]()
         
         for (_, subJson):(String, JSON) in self._jsonData {
             let title = subJson["category"].stringValue
+            let district = subJson["pddistrict"].stringValue
+//            let date = subJson["date"].stringValue
             let location = subJson["location"]
             
-            marksData.append((title: title, coordinate: CLLocationCoordinate2DMake(location["latitude"].doubleValue, location["longitude"].doubleValue)))
+            marksData.append((title, district, CLLocationCoordinate2DMake(location["latitude"].doubleValue, location["longitude"].doubleValue)))
         }
         return marksData
-    }
-    
-    func testJSON(rawData: AnyObject) {
-        self._jsonData = JSON(rawData)
-        for (index, subJson):(String, JSON) in self._jsonData {
-            print(index, subJson["category"])
-        }
     }
     
 }
