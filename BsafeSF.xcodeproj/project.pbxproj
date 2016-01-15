@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17114CBA1C47ECC800FCDE32 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17114CB91C47ECC700FCDE32 /* DataModel.swift */; };
 		17A0B1301C47678F0035C223 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17A0B12F1C47678F0035C223 /* Alamofire.framework */; };
 		17A0B1311C47678F0035C223 /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 17A0B12F1C47678F0035C223 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17A0B1341C47679A0035C223 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17A0B1331C47679A0035C223 /* SwiftyJSON.framework */; };
@@ -53,6 +54,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		17114CB91C47ECC700FCDE32 /* DataModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		17A0B12F1C47678F0035C223 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		17A0B1331C47679A0035C223 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		17C55D271C475D4F006E6DA5 /* BsafeSF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BsafeSF.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -132,6 +134,7 @@
 			children = (
 				17C55D2A1C475D4F006E6DA5 /* AppDelegate.swift */,
 				17C55D2C1C475D4F006E6DA5 /* ViewController.swift */,
+				17114CB91C47ECC700FCDE32 /* DataModel.swift */,
 				17C55D2E1C475D4F006E6DA5 /* Main.storyboard */,
 				17C55D311C475D4F006E6DA5 /* Assets.xcassets */,
 				17C55D331C475D4F006E6DA5 /* LaunchScreen.storyboard */,
@@ -311,6 +314,7 @@
 			files = (
 				17C55D2D1C475D4F006E6DA5 /* ViewController.swift in Sources */,
 				17C55D2B1C475D4F006E6DA5 /* AppDelegate.swift in Sources */,
+				17114CBA1C47ECC800FCDE32 /* DataModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
