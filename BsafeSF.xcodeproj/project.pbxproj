@@ -21,6 +21,7 @@
 		17C55D351C475D4F006E6DA5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17C55D331C475D4F006E6DA5 /* LaunchScreen.storyboard */; };
 		17C55D401C475D4F006E6DA5 /* BsafeSFTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C55D3F1C475D4F006E6DA5 /* BsafeSFTests.swift */; };
 		17C55D4B1C475D4F006E6DA5 /* BsafeSFUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C55D4A1C475D4F006E6DA5 /* BsafeSFUITests.swift */; };
+		17EDB12D1C49A37D007C6C69 /* Districts.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 17EDB12C1C49A37D007C6C69 /* Districts.geojson */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		17C55D461C475D4F006E6DA5 /* BsafeSFUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BsafeSFUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17C55D4A1C475D4F006E6DA5 /* BsafeSFUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BsafeSFUITests.swift; sourceTree = "<group>"; };
 		17C55D4C1C475D4F006E6DA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		17EDB12C1C49A37D007C6C69 /* Districts.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Districts.geojson; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +162,7 @@
 				17C55D2A1C475D4F006E6DA5 /* AppDelegate.swift */,
 				17C55D2C1C475D4F006E6DA5 /* ViewController.swift */,
 				17114CB91C47ECC700FCDE32 /* DataModel.swift */,
+				17EDB12C1C49A37D007C6C69 /* Districts.geojson */,
 				17C55D2E1C475D4F006E6DA5 /* Main.storyboard */,
 				17C55D311C475D4F006E6DA5 /* Assets.xcassets */,
 				17C55D331C475D4F006E6DA5 /* LaunchScreen.storyboard */,
@@ -294,6 +297,7 @@
 			files = (
 				17114CC31C496B9B00FCDE32 /* Info.plist in Resources */,
 				17C55D351C475D4F006E6DA5 /* LaunchScreen.storyboard in Resources */,
+				17EDB12D1C49A37D007C6C69 /* Districts.geojson in Resources */,
 				17C55D321C475D4F006E6DA5 /* Assets.xcassets in Resources */,
 				17C55D301C475D4F006E6DA5 /* Main.storyboard in Resources */,
 			);

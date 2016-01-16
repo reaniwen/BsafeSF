@@ -12,20 +12,21 @@ import SwiftyJSON
 
 private let initLocation = CLLocation(latitude: 37.774930, longitude: -122.435420)
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MKMapViewDelegate {
     
     @IBOutlet weak var baseMapView: MKMapView!
     
     let client = SODAClient(domain: "data.sfgov.org", token: "j9av0DoPIMeXOVaSrmD3jFeEf")
     
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        getData()
+        
+        baseMapView.delegate = self
         
         setMapRegion(initLocation)
+        getCrimeData()
         
         NSLog("getting data concurrently")
 //        print("getting data concurrently")
@@ -43,71 +44,105 @@ class ViewController: UIViewController {
         self.baseMapView.setRegion(coordinateRegion, animated: true)
     }
     
-    func getData() {
+    func getCrimeData() {
         let crimeLocation = client.queryDataset("tmnf-yvry")
         
         let targetDate = NSDate(timeIntervalSinceNow: -2_592_000.0)
         let formatter = NSDateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         let timeStr = "date >= '\(formatter.stringFromDate(targetDate))T00:00:00'"
-        
+
         
         crimeLocation.filter(timeStr).get { (res) -> Void in
             switch res {
-            case .Dataset(let data): self.parseData(data)//print(data.count)
+            case .Dataset(let data): self.getMapData(data)//self.parseData(data)//print(data.count)
             case .Error(let error): print("\(error)")
             }
         }
+        
     }
     
-    func testJSON(rawData: AnyObject) {
-        let json = JSON(rawData)
-        for (index, subJson):(String, JSON) in json {
-            print(index, subJson["category"])
-        }
-    }
-    
-    func parseData(rawData: AnyObject) {
-        
-        let json = JSON(rawData)
-        let datamodel = DataModel(jsonData: json)
-        let marksData = datamodel.generateMarks()
-        
-        // count times in different districts
-        var crimeTimes = [String: Int]()
-        
-        // generate marks on the map
-        print(marksData.count)
-        for mark in marksData {
-            
-            // classify district
-            let district = mark.district
-            if let val = crimeTimes[district] {
-                crimeTimes[district] = val + 1
-            } else {
-                crimeTimes[district] = 1
+    func getMapData(crimeData: AnyObject) {
+        if let path = NSBundle.mainBundle().pathForResource("Districts", ofType: "geojson") {
+            do{
+                let geoRawData = try NSData(contentsOfFile: path, options: NSDataReadingOptions.DataReadingMappedIfSafe)
+                
+                
+                if let crimeJson = JSON(rawValue: crimeData) {
+                    let geoData = try NSJSONSerialization.JSONObjectWithData(geoRawData, options: .MutableContainers)
+                    if let geoJson = JSON(rawValue: geoData) {
+                        let dataModel = DataModel(crimeJsonData: crimeJson, geoJsonData: geoJson)
+                        let polygonsBounds = dataModel.generateViewData()
+                        generatePolygons(polygonsBounds)
+                        
+                    }
+                }
+                
+            } catch {
+                print(error)
             }
-            let anno = Marks(title: mark.title, district: mark.district, coordinate: mark.coordinate)
-//            print(mark.district)
-            
-            
-            self.baseMapView.addAnnotation(anno)
-        }
-        for (key, val) in crimeTimes {
-            print(key, val)
         }
     }
+    
+    func generatePolygons(polygonsBounds: [([CLLocationCoordinate2D], Int)]) {
+//        var coordinates = [CLLocationCoordinate2DMake(0, -170), CLLocationCoordinate2DMake(0, 170), CLLocationCoordinate2DMake(10, 180)]
+//        let polygon = MKPolygon(coordinates: &coordinates, count: coordinates.count)
+//        self.baseMapView.addOverlay(polygon)
+        
+        for (polygonBoundsData, count) in polygonsBounds {
+            var polygonBoundsPoint = polygonBoundsData
+            let polygon = MKPolygon(coordinates: &polygonBoundsPoint, count: polygonBoundsPoint.count)
+            self.baseMapView.addOverlay(polygon)
+        }
+    }
+    
+
+    
+    
+//    func parseData(rawData: AnyObject) {
+//        
+//        let json = JSON(rawData)
+////        let datamodel = DataModel(jsonData: json)
+////        let marksData = datamodel.generateMarks()
+//
+//        
+//        // generate annotations on the map
+////        print(marksData.count)
+////        for mark in marksData {
+////            // generate annotation
+////            let anno = Marks(title: mark.title, coordinate: mark.coordinate)
+////            }
+//        }
+    
+//    }
+    
+    
+    func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
+        if overlay is MKPolyline {
+            let lineView = MKPolylineRenderer(overlay: overlay)
+            lineView.strokeColor = UIColor.greenColor()
+            
+            return lineView
+        } else if overlay is MKPolygon {
+            let polygonView = MKPolygonRenderer(overlay: overlay)
+            polygonView.strokeColor = UIColor.magentaColor()
+            
+            return polygonView
+        }
+        return MKOverlayRenderer()
+//        return nil
+    }
+    
+
     
 }
 
 class Marks: NSObject, MKAnnotation {
     let title: String?
-    let district: String
     let coordinate: CLLocationCoordinate2D
     
-    init(title: String, district: String, coordinate: CLLocationCoordinate2D) {
+    init(title: String, coordinate: CLLocationCoordinate2D) {
         self.title = title
-        self.district = district
         self.coordinate = coordinate
     }
 }
