@@ -18,6 +18,10 @@ class ViewController: UIViewController, MKMapViewDelegate {
     
     let client = SODAClient(domain: "data.sfgov.org", token: "j9av0DoPIMeXOVaSrmD3jFeEf")
     
+    let colorDict = [UIColor:[Int]]()
+    var colorsSet = [UIColor]()
+    private var _districtsRankDict = [MKPolygon:Int]()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,13 +49,16 @@ class ViewController: UIViewController, MKMapViewDelegate {
     }
     
     func getCrimeData() {
+        
+        // Gernerate SODA query
         let crimeLocation = client.queryDataset("tmnf-yvry")
         
         let targetDate = NSDate(timeIntervalSinceNow: -2_592_000.0)
         let formatter = NSDateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         let timeStr = "date >= '\(formatter.stringFromDate(targetDate))T00:00:00'"
-
+        
+//        let pdDistrictStr = "pddistrict = 'INGLESIDE'"
         
         crimeLocation.filter(timeStr).get { (res) -> Void in
             switch res {
@@ -66,57 +73,77 @@ class ViewController: UIViewController, MKMapViewDelegate {
         if let path = NSBundle.mainBundle().pathForResource("Districts", ofType: "geojson") {
             do{
                 let geoRawData = try NSData(contentsOfFile: path, options: NSDataReadingOptions.DataReadingMappedIfSafe)
-                
-                
                 if let crimeJson = JSON(rawValue: crimeData) {
                     let geoData = try NSJSONSerialization.JSONObjectWithData(geoRawData, options: .MutableContainers)
                     if let geoJson = JSON(rawValue: geoData) {
+                        
+                        // Generate the data model to parse and calculate the data
                         let dataModel = DataModel(crimeJsonData: crimeJson, geoJsonData: geoJson)
-                        let polygonsBounds = dataModel.generateViewData()
-                        generatePolygons(polygonsBounds)
+                        
+                        // Render the map with district polygons
+                        self._districtsRankDict = dataModel.generateViewData()
+                        generatePolygons()
+                        generateMarks(dataModel)
+                        //                        generatePolygons(polygonsBounds)
+                        
+                        // Render the marks on the map
                         
                     }
                 }
-                
             } catch {
                 print(error)
             }
         }
     }
     
-    func generatePolygons(polygonsBounds: [([CLLocationCoordinate2D], Int)]) {
-//        var coordinates = [CLLocationCoordinate2DMake(0, -170), CLLocationCoordinate2DMake(0, 170), CLLocationCoordinate2DMake(10, 180)]
-//        let polygon = MKPolygon(coordinates: &coordinates, count: coordinates.count)
-//        self.baseMapView.addOverlay(polygon)
-        
-        for (polygonBoundsData, count) in polygonsBounds {
-            var polygonBoundsPoint = polygonBoundsData
-            let polygon = MKPolygon(coordinates: &polygonBoundsPoint, count: polygonBoundsPoint.count)
+    func generatePolygons() {
+        for (polygon, _) in self._districtsRankDict {
             self.baseMapView.addOverlay(polygon)
         }
     }
     
-
+    func generateMarks(dataModel: DataModel) {
+        let marksLocations = dataModel.getAnnos()
+        for location in marksLocations {
+            let anno = Marks(title: location.title, coordinate: location.coordinate)
+            self.baseMapView.addAnnotation(anno)
+        }
+        
+    }
+    
+    //    func generatePolygons(polygonsBounds: [([CLLocationCoordinate2D], Int)]) {
+    //
+    //        // render polygon based on the map data in models
+    //        for (polygonBoundsData, rank) in polygonsBounds {
+    //            var polygonBoundsPoint = polygonBoundsData
+    //            let polygon = MKPolygon(coordinates: &polygonBoundsPoint, count: polygonBoundsPoint.count)
+    //            self._districtsTimesDict[polygon] = rank
+    //            self.baseMapView.addOverlay(polygon)
+    //        }
+    //
+    //    }
     
     
-//    func parseData(rawData: AnyObject) {
-//        
-//        let json = JSON(rawData)
-////        let datamodel = DataModel(jsonData: json)
-////        let marksData = datamodel.generateMarks()
-//
-//        
-//        // generate annotations on the map
-////        print(marksData.count)
-////        for mark in marksData {
-////            // generate annotation
-////            let anno = Marks(title: mark.title, coordinate: mark.coordinate)
-////            }
-//        }
-    
-//    }
     
     
+    //    func parseData(rawData: AnyObject) {
+    //
+    //        let json = JSON(rawData)
+    ////        let datamodel = DataModel(jsonData: json)
+    ////        let marksData = datamodel.generateMarks()
+    //
+    //
+    //        // generate annotations on the map
+    ////        print(marksData.count)
+    ////        for mark in marksData {
+    ////            // generate annotation
+    ////            let anno = Marks(title: mark.title, coordinate: mark.coordinate)
+    ////            }
+    //        }
+    
+    //    }
+    
+    // mapView delegate
     func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
         if overlay is MKPolyline {
             let lineView = MKPolylineRenderer(overlay: overlay)
@@ -125,18 +152,32 @@ class ViewController: UIViewController, MKMapViewDelegate {
             return lineView
         } else if overlay is MKPolygon {
             let polygonView = MKPolygonRenderer(overlay: overlay)
-            polygonView.strokeColor = UIColor.magentaColor()
+            
+            //generate color based on rank
+            polygonView.lineWidth = 1
+            polygonView.strokeColor = UIColor.blackColor()
+            //            let index = self._districtsRankDict[overlay as! MKPolygon]
+            //            if index <
             
             return polygonView
         }
         return MKOverlayRenderer()
-//        return nil
+        //        return nil
     }
     
-
+    //    func setColorDict() {
+    //        let colorsStrArray = ["#ff0000", "#eb3600", "#e54800", "#d86d00", "#d27f00", "#c5a300", "#b9c800", "#a6ff00"]
+    //        for colorStr in colorsStrArray {
+    //            let color = UIColor(rgba: colorStr)
+    //            self.colorsSet.append(color)
+    //        }
+    //    }
+    
+    
     
 }
 
+// the class of annotation
 class Marks: NSObject, MKAnnotation {
     let title: String?
     let coordinate: CLLocationCoordinate2D
@@ -146,4 +187,5 @@ class Marks: NSObject, MKAnnotation {
         self.coordinate = coordinate
     }
 }
+
 
