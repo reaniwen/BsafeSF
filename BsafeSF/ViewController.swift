@@ -29,6 +29,8 @@ class ViewController: UIViewController, MKMapViewDelegate {
         
         baseMapView.delegate = self
         
+        setColorDict()
+        
         setMapRegion(initLocation)
         getCrimeData()
         
@@ -156,8 +158,13 @@ class ViewController: UIViewController, MKMapViewDelegate {
             //generate color based on rank
             polygonView.lineWidth = 1
             polygonView.strokeColor = UIColor.blackColor()
-            //            let index = self._districtsRankDict[overlay as! MKPolygon]
-            //            if index <
+            let index = self._districtsRankDict[overlay as! MKPolygon]
+            print(index)
+            if index < 4 {
+                polygonView.fillColor = self.colorsSet[7]
+            } else {
+                polygonView.fillColor = self.colorsSet[10 - index!]
+            }
             
             return polygonView
         }
@@ -165,13 +172,31 @@ class ViewController: UIViewController, MKMapViewDelegate {
         //        return nil
     }
     
-    //    func setColorDict() {
-    //        let colorsStrArray = ["#ff0000", "#eb3600", "#e54800", "#d86d00", "#d27f00", "#c5a300", "#b9c800", "#a6ff00"]
-    //        for colorStr in colorsStrArray {
-    //            let color = UIColor(rgba: colorStr)
-    //            self.colorsSet.append(color)
-    //        }
-    //    }
+    func setColorDict() {
+        let colorsStrArray = ["#ff0000", "#eb3600", "#e54800", "#d86d00", "#d27f00", "#c5a300", "#b9c800", "#a6ff00"]
+        for colorStr in colorsStrArray {
+            let color = hexStringToUIColor(colorStr)
+            self.colorsSet.append(color)
+        }
+    }
+    
+    func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
+        
+        if (cString.hasPrefix("#")) {
+            cString = cString.substringFromIndex(cString.startIndex.advancedBy(1))
+        }
+        
+        var rgbValue:UInt32 = 0
+        NSScanner(string: cString).scanHexInt(&rgbValue)
+        
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(0.5)
+        )
+    }
     
     
     
