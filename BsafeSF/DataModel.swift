@@ -16,12 +16,8 @@ class DataModel {
     
     private var _crimeLocationData = [(title: String, subTitle:String, coordinate: CLLocationCoordinate2D)]()
     
-    private var polygonCountDict = [MKPolygon: Int]()
-    private var polygonArray = [MKPolygon]()
-    private var viewArray = [CGMutablePath]()
-    private var polygonViewTupleArray = [(MKPolygon, CGMutablePath)]()
-    
-    //    private let concurrentJSONQueue = dispatch_queue_create("com.close5.BsafeSF.JSONQueue", DISPATCH_QUEUE_CONCURRENT)
+    private var _polygonCountDict = [MKPolygon: Int]()
+    private var _polygonViewTupleArray = [(MKPolygon, CGMutablePath)]()
     
     init(crimeJsonData: JSON, geoJsonData: JSON) {
         _crimeJsonData = crimeJsonData
@@ -36,8 +32,7 @@ class DataModel {
         self.generateAnnos()
         
         // Sort the polygons
-        let sortedPolygonArray = (self.polygonCountDict as NSDictionary).keysSortedByValueUsingSelector("compare:")
-        print(sortedPolygonArray)
+        let sortedPolygonArray = (self._polygonCountDict as NSDictionary).keysSortedByValueUsingSelector("compare:")
         
         // return the polygons data with rank
         var polygonDict = [MKPolygon:Int]()
@@ -56,10 +51,8 @@ class DataModel {
             }
             let polygon = MKPolygon(coordinates: &polygonEdgesPoint, count: polygonEdgesPoint.count)
             
-            self.polygonCountDict[polygon] = 0
-            self.polygonArray.append(polygon)
-            self.viewArray.append(self.generatePathRef(polygonEdgesPoint))
-            self.polygonViewTupleArray.append((polygon,self.generatePathRef(polygonEdgesPoint)))
+            self._polygonCountDict[polygon] = 0
+            self._polygonViewTupleArray.append((polygon,self.generatePathRef(polygonEdgesPoint)))
         }
     }
     
@@ -71,23 +64,17 @@ class DataModel {
             
             let mkMapPoint = MKMapPointForCoordinate(location)
             let point = CGPointMake(CGFloat(mkMapPoint.x), CGFloat(mkMapPoint.y))
-            //            let point = CGPointMake(CGFloat(location.longitude), CGFloat(location.latitude))
 
-            for i in 0..<self.polygonViewTupleArray.count {
-                let (polygon, pathRef) = self.polygonViewTupleArray[i]
-                //                let polygonBezierPath = UIBezierPath(CGPath: pathRef)
-                //                if polygonBezierPath.containsPoint(point) {
+            for i in 0..<self._polygonViewTupleArray.count {
+                let (polygon, pathRef) = self._polygonViewTupleArray[i]
                 if CGPathContainsPoint(pathRef, nil, point, false) {
-                    if let count = self.polygonCountDict[polygon] {
-                        self.polygonCountDict[polygon] = count + 1
+                    if let count = self._polygonCountDict[polygon] {
+                        self._polygonCountDict[polygon] = count + 1
                     }
                 }
             }
             
             self._crimeLocationData.append((title:title, subTitle:subTitle, coordinate:location))
-        }
-        for (key, val) in self.polygonCountDict {
-            print(key, val)
         }
     }
     
@@ -96,7 +83,7 @@ class DataModel {
     }
     
     func generatePathRef(points: [CLLocationCoordinate2D]) -> CGMutablePathRef{
-        var mpr = CGPathCreateMutable()
+        let mpr = CGPathCreateMutable()
         
         let polygonPoints = points
         
@@ -109,5 +96,20 @@ class DataModel {
             }
         }
         return mpr
+    }
+}
+
+class Logo {
+    let positionData = [[(169,10),(159, 10),(159,-10),(169,-10)], [(172,10),(172,-10)], [(175,0),(175,-10),(-175,-10),(-175,0),(175.01,0)], [(-164,0),(-174,0),(-174,-5),(-164,-5),(-164,-10),(-174,-10)], [(-162.99,-5),(-153,-5),(-153,0),(-163,0),(-163,-10),(-153,-10)], [(-140,10),(-150,10),(-150,0),(-140,0),(-140,-10),(-150,-10)]]
+    let logo = ["c","l","o","s","e","5"]
+    var logoData = [String: [CLLocationCoordinate2D]]()
+    init() {
+        for i in 0..<positionData.count {
+            var coordinates = [CLLocationCoordinate2D]()
+            for (x,y) in positionData[i] {
+                coordinates.append(CLLocationCoordinate2DMake(Double(y), Double(x)))
+            }
+            logoData[logo[i]] = coordinates
+        }
     }
 }

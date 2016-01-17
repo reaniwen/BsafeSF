@@ -18,7 +18,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
     
     let client = SODAClient(domain: "data.sfgov.org", token: "j9av0DoPIMeXOVaSrmD3jFeEf")
     
-    let colorDict = [UIColor:[Int]]()
     var colorsSet = [UIColor]()
     private var _districtsRankDict = [MKPolygon:Int]()
     var marksHidden = false
@@ -30,13 +29,12 @@ class ViewController: UIViewController, MKMapViewDelegate {
         
         baseMapView.delegate = self
         
-        setColorDict()
+        setColorSet()
         
         setMapRegion(initLocation)
         getCrimeData()
         
-        NSLog("getting data concurrently")
-//        print("getting data concurrently")
+        NSLog("Getting Data Concurrently")
     }
 
     override func didReceiveMemoryWarning() {
@@ -65,7 +63,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
         
         crimeLocation.filter(timeStr).get { (res) -> Void in
             switch res {
-            case .Dataset(let data): self.getMapData(data)//self.parseData(data)//print(data.count)
+            case .Dataset(let data): self.getMapData(data)  //print(data.count)
             case .Error(let error): print("\(error)")
             }
         }
@@ -85,11 +83,10 @@ class ViewController: UIViewController, MKMapViewDelegate {
                         
                         // Render the map with district polygons
                         self._districtsRankDict = dataModel.generateViewData()
-                        generatePolygons()
-                        generateMarks(dataModel)
-                        //                        generatePolygons(polygonsBounds)
+                        renderPolygons()
                         
                         // Render the marks on the map
+                        generateMarks(dataModel)
                         
                     }
                 }
@@ -99,9 +96,17 @@ class ViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
-    func generatePolygons() {
+    func renderPolygons() {
+        NSLog("Rendering district polygons")
         for (polygon, _) in self._districtsRankDict {
             self.baseMapView.addOverlay(polygon)
+        }
+        
+        let logo = Logo()
+        for (_,vals) in logo.logoData{
+            var points:[CLLocationCoordinate2D] = vals
+            let line = MKPolyline(coordinates: &points , count: points.count)
+            self.baseMapView.addOverlay(line)
         }
     }
     
@@ -118,11 +123,13 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let annotations = self.baseMapView.annotations
         if self.marksHidden {
             self.marksHidden = false
+
             for annotation in annotations {
                 self.baseMapView.viewForAnnotation(annotation)?.hidden = false
             }
         } else {
             self.marksHidden = true
+            
             for annotation in annotations {
                 self.baseMapView.viewForAnnotation(annotation)?.hidden = true
             }
@@ -134,17 +141,18 @@ class ViewController: UIViewController, MKMapViewDelegate {
     func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
         if overlay is MKPolyline {
             let lineView = MKPolylineRenderer(overlay: overlay)
-            lineView.strokeColor = UIColor.greenColor()
+            lineView.strokeColor = UIColor.redColor()
             
             return lineView
         } else if overlay is MKPolygon {
             let polygonView = MKPolygonRenderer(overlay: overlay)
             
-            //generate color based on rank
             polygonView.lineWidth = 1
             polygonView.strokeColor = UIColor.blackColor()
+            
+            //generate color based on rank
             let index = self._districtsRankDict[overlay as! MKPolygon]
-            print(index)
+            
             if index < 4 {
                 polygonView.fillColor = self.colorsSet[7]
             } else {
@@ -154,10 +162,10 @@ class ViewController: UIViewController, MKMapViewDelegate {
             return polygonView
         }
         return MKOverlayRenderer()
-        //        return nil
+//        return nil
     }
     
-    func setColorDict() {
+    func setColorSet() {
         let colorsStrArray = ["#ff0000", "#eb3600", "#e54800", "#d86d00", "#d27f00", "#c5a300", "#b9c800", "#a6ff00"]
         for colorStr in colorsStrArray {
             let color = hexStringToUIColor(colorStr)
@@ -194,7 +202,6 @@ class Marks: NSObject, MKAnnotation {
     let coordinate: CLLocationCoordinate2D
     
     init(title: String, subTitle: String,coordinate: CLLocationCoordinate2D) {
-//        super.init()
         self.title = title
         self.discription = subTitle
         self.coordinate = coordinate
@@ -204,5 +211,4 @@ class Marks: NSObject, MKAnnotation {
         return discription
     }
 }
-
 
