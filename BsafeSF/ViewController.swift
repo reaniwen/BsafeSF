@@ -21,6 +21,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
     let colorDict = [UIColor:[Int]]()
     var colorsSet = [UIColor]()
     private var _districtsRankDict = [MKPolygon:Int]()
+    var marksHidden = false
     
     
     override func viewDidLoad() {
@@ -107,43 +108,27 @@ class ViewController: UIViewController, MKMapViewDelegate {
     func generateMarks(dataModel: DataModel) {
         let marksLocations = dataModel.getAnnos()
         for location in marksLocations {
-            let anno = Marks(title: location.title, coordinate: location.coordinate)
+            let anno = Marks(title: location.title, subTitle: location.subTitle, coordinate: location.coordinate)
             self.baseMapView.addAnnotation(anno)
         }
         
     }
     
-    //    func generatePolygons(polygonsBounds: [([CLLocationCoordinate2D], Int)]) {
-    //
-    //        // render polygon based on the map data in models
-    //        for (polygonBoundsData, rank) in polygonsBounds {
-    //            var polygonBoundsPoint = polygonBoundsData
-    //            let polygon = MKPolygon(coordinates: &polygonBoundsPoint, count: polygonBoundsPoint.count)
-    //            self._districtsTimesDict[polygon] = rank
-    //            self.baseMapView.addOverlay(polygon)
-    //        }
-    //
-    //    }
-    
-    
-    
-    
-    //    func parseData(rawData: AnyObject) {
-    //
-    //        let json = JSON(rawData)
-    ////        let datamodel = DataModel(jsonData: json)
-    ////        let marksData = datamodel.generateMarks()
-    //
-    //
-    //        // generate annotations on the map
-    ////        print(marksData.count)
-    ////        for mark in marksData {
-    ////            // generate annotation
-    ////            let anno = Marks(title: mark.title, coordinate: mark.coordinate)
-    ////            }
-    //        }
-    
-    //    }
+    @IBAction func hideShowMarks(sender: AnyObject) {
+        let annotations = self.baseMapView.annotations
+        if self.marksHidden {
+            self.marksHidden = false
+            for annotation in annotations {
+                self.baseMapView.viewForAnnotation(annotation)?.hidden = false
+            }
+        } else {
+            self.marksHidden = true
+            for annotation in annotations {
+                self.baseMapView.viewForAnnotation(annotation)?.hidden = true
+            }
+        }
+
+    }
     
     // mapView delegate
     func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
@@ -205,11 +190,18 @@ class ViewController: UIViewController, MKMapViewDelegate {
 // the class of annotation
 class Marks: NSObject, MKAnnotation {
     let title: String?
+    let discription: String?
     let coordinate: CLLocationCoordinate2D
     
-    init(title: String, coordinate: CLLocationCoordinate2D) {
+    init(title: String, subTitle: String,coordinate: CLLocationCoordinate2D) {
+//        super.init()
         self.title = title
+        self.discription = subTitle
         self.coordinate = coordinate
+    }
+    
+    var subtitle: String? {
+        return discription
     }
 }
 

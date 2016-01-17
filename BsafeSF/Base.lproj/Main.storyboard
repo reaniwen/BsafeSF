@@ -29,7 +29,13 @@
                             <constraint firstItem="Mak-Io-ZF0" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="nVL-bD-hnp"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="BsafeSF" id="y95-hf-vlb"/>
+                    <navigationItem key="navigationItem" title="BsafeSF" id="y95-hf-vlb">
+                        <barButtonItem key="rightBarButtonItem" title="Hide/Show" id="zAw-6C-coG">
+                            <connections>
+                                <action selector="hideShowMarks:" destination="BYZ-38-t0r" id="aYb-zB-Eav"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="baseMapView" destination="Mak-Io-ZF0" id="NQ7-Th-41z"/>
                     </connections>
