@@ -5,7 +5,7 @@ BsafeSF
 This APP is a demo to show the crime happened in the recent 1 month and show you whether some districts are safe or not.<br>
 The district is based on zipcode, and the color of district is based on how many crime it has comparing with other districts.<br>
 On the right top conern, there is a button to show or hide markers of all the crimes.<br>
-There is a 'painted egg' in the app, find it! <br>
+There is a `painted egg` in the app, find it! <br>
 After all, I also like the name of SAFE, which is short for SAn Francisco Elite.<br>
 
 # Requirement
